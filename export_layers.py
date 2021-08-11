@@ -75,7 +75,7 @@ class LayerExport(inkex.Effect):
                                      action='store',
                                      type=str,
                                      dest='hide_layers',
-                                     default=None,
+                                     default="true",
                                      help="Hide or remove layers")
 
     def effect(self):
