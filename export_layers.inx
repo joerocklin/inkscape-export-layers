@@ -36,6 +36,14 @@
     <param name="help" type="description"> Show all exported layers below the currentl layer.     </param>
     <param name="show-layers-below" type="boolean" _gui-text="Progressively reveal elements of a figure">true</param>
 
+    <param name="help" type="description">    </param>
+    <param name="help" type="description"> Hiding hidden layers will mark them as 'display:none' in the output. Removing layers will not include the layer data at all.</param>
+    <param name="help" type="description">    </param>
+    <param name="hide-layers" type="optiongroup"  _gui-text="Hide or Remove layers">
+        <option value="true" selected="selected">Hide 'hidden' layers</option>
+        <option value="false">Remove 'hidden' Layers</option>
+    </param>
+
     <param name="help" type="description">     </param>
     <param name="file-type" type="optiongroup"  _gui-text="Output file type">
         <option value="pdf" selected="selected">PDF</option>

@@ -71,6 +71,12 @@ class LayerExport(inkex.Effect):
                                      dest='show_layers_below',
                                      default=None,
                                      help="Show exported layers below the current layer")
+        self.arg_parser.add_argument('--hide-layers',
+                                     action='store',
+                                     type=str,
+                                     dest='hide_layers',
+                                     default=None,
+                                     help="Hide or remove layers")
 
     def effect(self):
         
@@ -78,6 +84,7 @@ class LayerExport(inkex.Effect):
         self.options.fit_contents      = True if self.options.fit_contents      == 'true' else False
         self.options.enumerate         = True if self.options.enumerate         == 'true' else False
         self.options.show_layers_below = True if self.options.show_layers_below == 'true' else False
+        self.options.hide_layers       = True if self.options.hide_layers       == 'true' else False
 
         #get output dir from specified source file
         #otherwise set it as $HOME
@@ -106,7 +113,7 @@ class LayerExport(inkex.Effect):
         export_list = self.get_export_list(layer_list, self.options.show_layers_below)
         with _make_temp_directory() as tmp_dir:
             for export in export_list:
-                svg_file = self.export_to_svg(export, tmp_dir)
+                svg_file = self.export_to_svg(export, tmp_dir, self.options.hide_layers)
 
                 if self.options.file_type == PNG:
                     if not self.convert_svg_to_png(svg_file, output_dir, prefix):
@@ -204,11 +211,12 @@ class LayerExport(inkex.Effect):
 
         return export_list
 
-    def export_to_svg(self, export, output_dir):
+    def export_to_svg(self, export, output_dir, hide_layers):
         """
         Export a current document to an Inkscape SVG file.
         :arg Export export: Export description.
-        :arg str output_dir: Path to an output directory.
+        :arg str output_dir: Path to an output directcory.
+        :arg bool hide_layers: Hide layers or remove them.
         :return Output file path.
         """
         document = copy.deepcopy(self.document)
@@ -220,7 +228,10 @@ class LayerExport(inkex.Effect):
             if layer.attrib['id'] in export.visible_layers:
                 layer.attrib['style'] = 'display:inline'
             else:
-                layer.attrib['style'] = 'display:none'
+                if hide_layers:
+                    layer.attrib['style'] = 'display:none'
+                else:
+                    layer.delete()
 
         output_file = os.path.join(output_dir, export.file_name + '.svg')
         document.write(output_file)
